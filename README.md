@@ -10,6 +10,7 @@ GET /pokemon/{name} - Fetch Pokemon data from PokeAPI
 GET /pokemon/random - Random Pokemon selection
 GET /metrics - Prometheus metrics
 
+```
 port-devops-challenge/
 ├── app/                        # FastAPI Pokemon Service
 │   ├── src/
@@ -43,6 +44,7 @@ port-devops-challenge/
 │   ├── architecture-diagram.png
 │   └── production-recommendations.md
 └── README.md                 # This file
+```
 
 
 🛠️ Prerequisites
