@@ -47,39 +47,14 @@ port-devops-challenge/
 ```
 
 
-🛠️ Prerequisites
-
+# 🛠️ Prerequisites
 AWS CLI configured with provided credentials
-Terraform >= 1.5, kubectl >= 1.28, Helm >= 3.12, Docker >= 20.10
-
-🚦 Quick Start
-bash# 1. Deploy Infrastructure
-cd infrastructure/environments/dev
-terraform init && terraform apply
-
-# 2. Configure kubectl
-aws eks update-kubeconfig --region us-west-2 --name port-eks-cluster
-
-# 3. Deploy Pokemon Service
-helm upgrade --install pokemon-service ./helm/pokemon-service
-🔧 Local Development
-bashcd app
-pip install -r requirements.txt
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+Terraform >= 1.5
+kubectl >= 1.28
+Helm >= 3.12
+Docker >= 20.10
 
 # Test endpoints
 curl http://localhost:8000/health
 curl http://localhost:8000/pokemon/pikachu
 curl http://localhost:8000/pokemon/random
-📈 Production Features
-
-External API integration with PokeAPI
-Error handling & retries for API calls
-Caching for improved performance
-Monitoring with health checks and metrics
-Environment-specific configuration
-
-⏱️ Implementation Timeline
-Total: 10-15 hours across infrastructure, containerization, Helm charts, CI/CD, and documentation.
-
-Status: 🚧 In Progress
