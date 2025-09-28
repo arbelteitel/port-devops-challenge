@@ -14,7 +14,7 @@ env:
 jobs:
   test:
     name: Test and Build Image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-arm64
     outputs:
       temp-image-uri: ${{ steps.build-temp.outputs.temp-image-uri }}
     
@@ -69,7 +69,7 @@ jobs:
 
   build:
     name: Tag and Push Final Image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-arm64
     needs: test
     if: github.ref == 'refs/heads/main'
     outputs:
@@ -111,7 +111,7 @@ jobs:
 
   deploy:
     name: Deploy to EKS
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-arm64
     needs: build
     if: github.ref == 'refs/heads/main'
     
