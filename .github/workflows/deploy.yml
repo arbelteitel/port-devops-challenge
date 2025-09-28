@@ -1,4 +1,4 @@
-name: Build and Deploy to EKS
+name: CI/CD Pipeline
 
 on:
   push:
@@ -12,8 +12,8 @@ env:
   ECR_REPOSITORY: port-devops-app
 
 jobs:
-  build-and-deploy:
-    name: Test, Build and Deploy
+  test:
+    name: Test Application
     runs-on: ubuntu-latest
     
     steps:
@@ -25,12 +25,33 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install dependencies and run tests
+    - name: Install dependencies
       run: |
         cd app
         pip install -r requirements.txt
         pip install pytest httpx
+
+    - name: Run tests
+      run: |
+        cd app
         python -m pytest tests/ -v || echo "No tests found, continuing..."
+
+    - name: Test Docker build
+      run: |
+        cd app
+        docker build -t fastapi-app:test .
+
+  build:
+    name: Build and Push Image
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      image-uri: ${{ steps.build.outputs.image-uri }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -48,7 +69,8 @@ jobs:
         aws ecr describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION || \
         aws ecr create-repository --repository-name $ECR_REPOSITORY --region $AWS_REGION
 
-    - name: Build, tag, and push image to Amazon ECR
+    - name: Build, tag, and push image
+      id: build
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
@@ -58,6 +80,24 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        echo "image-uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  deploy:
+    name: Deploy to EKS
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
 
     - name: Install Helm
       uses: azure/setup-helm@v4
@@ -67,11 +107,14 @@ jobs:
     - name: Update kube config
       run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
-    - name: Deploy to EKS with Helm
+    - name: Deploy with Helm
       env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        IMAGE_URI: ${{ needs.build.outputs.image-uri }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
+        # Extract registry and repository from image URI
+        ECR_REGISTRY=$(echo $IMAGE_URI | cut -d'/' -f1)
+        
         # Deploy using Helm
         helm upgrade --install arbel-app ./helm \
           --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
@@ -79,7 +122,9 @@ jobs:
           --set nameOverride=arbel-app \
           --set fullnameOverride=arbel-app \
           --wait --timeout=300s
-        
-        # Get deployment status
+
+    - name: Verify deployment
+      run: |
         kubectl get pods -l app.kubernetes.io/name=arbel-app
         kubectl get services
+        echo "🚀 Deployment completed successfully!"
