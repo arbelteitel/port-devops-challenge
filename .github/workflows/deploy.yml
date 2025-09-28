@@ -87,26 +87,25 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v2
 
-    - name: Pull, retag, and push final images
+    - name: Retag images using ECR
       id: retag
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
         TEMP_IMAGE_URI: ${{ needs.test.outputs.temp-image-uri }}
       run: |
-        # Pull the temporary image
-        docker pull $TEMP_IMAGE_URI
+        # Use ECR to retag the ARM64 image without pulling
+        TEMP_TAG="temp-$IMAGE_TAG"
         
-        # Tag with final tags
-        docker tag $TEMP_IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker tag $TEMP_IMAGE_URI $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        # Get the image manifest
+        MANIFEST=$(aws ecr batch-get-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$TEMP_TAG --query 'images[0].imageManifest' --output text --region $AWS_REGION)
         
-        # Push final images
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+        # Put the manifest with new tags
+        aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag $IMAGE_TAG --image-manifest "$MANIFEST" --region $AWS_REGION
+        aws ecr put-image --repository-name $ECR_REPOSITORY --image-tag latest --image-manifest "$MANIFEST" --region $AWS_REGION
         
         # Clean up temporary image
-        aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=temp-$IMAGE_TAG --region $AWS_REGION || true
+        aws ecr batch-delete-image --repository-name $ECR_REPOSITORY --image-ids imageTag=$TEMP_TAG --region $AWS_REGION || true
         
         echo "image-uri=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
