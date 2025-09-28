@@ -17,7 +17,7 @@ module "eks" {
   # We'll manage node groups separately
   eks_managed_node_groups = {}
 
-  manage_aws_auth_configmap = true
+  manage_aws_auth_configmap = false
 
   tags = var.tags
 }
