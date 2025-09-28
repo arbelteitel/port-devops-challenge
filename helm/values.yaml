@@ -1,0 +1,43 @@
+# Default values for port-devops-app.
+# This is a YAML-formatted file.
+
+replicaCount: 2
+
+image:
+  repository: ""  # Will be set by CI/CD pipeline
+  pullPolicy: IfNotPresent
+  tag: ""  # Will be set by CI/CD pipeline
+
+nameOverride: "arbel-app"
+fullnameOverride: "arbel-app"
+
+service:
+  type: LoadBalancer
+  port: 80
+  targetPort: 8000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 30
+  periodSeconds: 10
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: 8000
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+env:
+  - name: PORT
+    value: "8000"

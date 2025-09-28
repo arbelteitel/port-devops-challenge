@@ -47,20 +47,27 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: '3.13.1'
+
     - name: Update kube config
       run: aws eks update-kubeconfig --name $EKS_CLUSTER_NAME --region $AWS_REGION
 
-    - name: Deploy to EKS
+    - name: Deploy to EKS with Helm
       env:
         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         IMAGE_TAG: ${{ github.sha }}
       run: |
-        # Apply Kubernetes manifests
-        envsubst < k8s/deployment.yaml | kubectl apply -f -
-        envsubst < k8s/service.yaml | kubectl apply -f -
+        # Deploy using Helm
+        helm upgrade --install arbel-app ./helm \
+          --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
+          --set image.tag=$IMAGE_TAG \
+          --set nameOverride=arbel-app \
+          --set fullnameOverride=arbel-app \
+          --wait --timeout=300s
         
-        # Wait for deployment to be ready
-        kubectl rollout status deployment/fastapi-app
-        
-        # Get service URL
-        kubectl get services fastapi-service
+        # Get deployment status
+        kubectl get pods -l app.kubernetes.io/name=arbel-app
+        kubectl get services
