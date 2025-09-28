@@ -1,6 +1,6 @@
 # Configuration values for arbel-app deployment
 
-replicaCount: 3
+replicaCount: 2
 
 image:
   repository: ""  # Will be set by CI/CD pipeline
@@ -48,9 +48,6 @@ affinity:
     - weight: 100
       podAffinityTerm:
         labelSelector:
-          matchExpressions:
-          - key: app
-            operator: In
-            values:
-            - arbel-app
+          matchLabels:
+            app: arbel-app
         topologyKey: topology.kubernetes.io/zone

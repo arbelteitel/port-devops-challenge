@@ -146,8 +146,7 @@ jobs:
           --set image.repository=$ECR_REGISTRY/$ECR_REPOSITORY \
           --set image.tag=$IMAGE_TAG \
           --set nameOverride=arbel-app \
-          --set fullnameOverride=arbel-app \
-          --wait --timeout=300s
+          --set fullnameOverride=arbel-app
 
     - name: Verify deployment
       run: |
