@@ -54,6 +54,9 @@ jobs:
         aws ecr describe-repositories --repository-names $ECR_REPOSITORY --region $AWS_REGION || \
         aws ecr create-repository --repository-name $ECR_REPOSITORY --region $AWS_REGION
 
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
     - name: Build and push temporary image
       id: build-temp
       env:
@@ -61,8 +64,7 @@ jobs:
         TEMP_TAG: temp-${{ github.sha }}
       run: |
         cd app
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$TEMP_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$TEMP_TAG
+        docker buildx build --platform linux/arm64 -t $ECR_REGISTRY/$ECR_REPOSITORY:$TEMP_TAG --push .
         echo "temp-image-uri=$ECR_REGISTRY/$ECR_REPOSITORY:$TEMP_TAG" >> $GITHUB_OUTPUT
 
   build:
