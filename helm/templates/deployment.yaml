@@ -16,6 +16,10 @@ spec:
         app: {{ include "port-devops-app.name" . }}
     spec:
       serviceAccountName: default
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"

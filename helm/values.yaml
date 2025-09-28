@@ -1,6 +1,6 @@
 # Configuration values for arbel-app deployment
 
-replicaCount: 2
+replicaCount: 3
 
 image:
   repository: ""  # Will be set by CI/CD pipeline
@@ -40,3 +40,17 @@ readinessProbe:
 env:
   - name: PORT
     value: "8000"
+
+# Pod anti-affinity to spread pods across different availability zones
+affinity:
+  podAntiAffinity:
+    preferredDuringSchedulingIgnoredDuringExecution:
+    - weight: 100
+      podAffinityTerm:
+        labelSelector:
+          matchExpressions:
+          - key: app
+            operator: In
+            values:
+            - arbel-app
+        topologyKey: topology.kubernetes.io/zone

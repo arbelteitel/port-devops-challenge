@@ -1,7 +1,7 @@
 aws_region = "eu-west-1"
 
 cluster_name    = "port-devops-dev"
-cluster_version = "1.28"
+cluster_version = "1.30"
 environment     = "dev"
 
 vpc_cidr = "10.0.0.0/16"
