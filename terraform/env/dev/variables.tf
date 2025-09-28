@@ -34,6 +34,12 @@ variable "node_instance_types" {
   default     = ["t3.small"]
 }
 
+variable "node_ami_type" {
+  description = "AMI type for EKS node group (AL2_x86_64 or AL2_ARM_64)"
+  type        = string
+  default     = "AL2_x86_64"
+}
+
 variable "node_desired_size" {
   description = "Desired number of nodes"
   type        = number

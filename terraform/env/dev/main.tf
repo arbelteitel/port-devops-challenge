@@ -85,6 +85,7 @@ module "node_groups" {
   private_subnets = module.networking.private_subnets
 
   instance_types = var.node_instance_types
+  ami_type      = var.node_ami_type
   min_size      = var.node_min_size
   max_size      = var.node_max_size
   desired_size  = var.node_desired_size

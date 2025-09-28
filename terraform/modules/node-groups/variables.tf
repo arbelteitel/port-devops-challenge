@@ -71,3 +71,9 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "ami_type" {
+  description = "Type of Amazon Machine Image (AMI) associated with the EKS Node Group"
+  type        = string
+  default     = "AL2_x86_64"
+}

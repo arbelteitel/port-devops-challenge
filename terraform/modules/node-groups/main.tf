@@ -10,6 +10,7 @@ module "eks_managed_node_group" {
 
   instance_types = var.instance_types
   capacity_type  = var.capacity_type
+  ami_type       = var.ami_type
 
   min_size     = var.min_size
   max_size     = var.max_size
