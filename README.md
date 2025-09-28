@@ -1,60 +1,18 @@
-# port-devops-challenge
+# Port DevOps Challenge
 
-🚀 Overview
-End-to-end DevOps solution implementing a production-ready CI/CD pipeline for a Pokemon API microservice on AWS EKS, featuring Infrastructure as Code, containerization, and Helm-based deployments.
-🎯 Application Features
-FastAPI Pokemon Service:
+FastAPI app deployed to AWS EKS with Terraform and Helm.
 
-GET /health - Health check endpoint
-GET /pokemon/{name} - Fetch Pokemon data from PokeAPI
-GET /pokemon/random - Random Pokemon selection
-GET /metrics - Prometheus metrics
-
+## Structure
 ```
-port-devops-challenge/
-├── app/                        # FastAPI Pokemon Service
-│   ├── src/
-│   │   └── main.py            # FastAPI with Pokemon endpoints
-│   ├── Dockerfile             # Multi-stage container build
-│   ├── requirements.txt       # Python dependencies
-│   └── .dockerignore
-├── infrastructure/             # Terraform Infrastructure
-│   ├── modules/
-│   │   ├── networking/        # VPC, subnets, security groups
-│   │   ├── eks/               # EKS cluster configuration
-│   │   └── ecr/               # Container registry
-│   ├── environments/
-│   │   ├── dev/
-│   │   └── prod/
-│   ├── main.tf
-│   ├── variables.tf
-│   └── outputs.tf
-├── helm/                      # Helm Charts
-│   └── pokemon-service/
-│       ├── Chart.yaml
-│       ├── values.yaml
-│       ├── values-dev.yaml
-│       ├── values-prod.yaml
-│       └── templates/
-├── .github/workflows/         # CI/CD Pipelines
-│   ├── infrastructure.yml    # Terraform deployment
-│   ├── application.yml       # App build & deploy
-│   └── helm-lint.yml        # Chart validation
-├── docs/                     # Documentation
-│   ├── architecture-diagram.png
-│   └── production-recommendations.md
-└── README.md                 # This file
+├── app/           # FastAPI application
+├── terraform/     # Infrastructure as Code
+├── helm/          # Kubernetes deployment
+└── .github/       # CI/CD pipeline
 ```
 
+## Endpoints
+- `GET /` - Hello message
+- `GET /health` - Health check
 
-# 🛠️ Prerequisites
-AWS CLI configured with provided credentials
-Terraform >= 1.5
-kubectl >= 1.28
-Helm >= 3.12
-Docker >= 20.10
-
-# Test endpoints
-curl http://localhost:8000/health
-curl http://localhost:8000/pokemon/pikachu
-curl http://localhost:8000/pokemon/random
+## Deploy
+Push to main branch - GitHub Actions handles the rest.

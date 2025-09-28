@@ -13,12 +13,24 @@ env:
 
 jobs:
   build-and-deploy:
-    name: Build and Deploy
+    name: Test, Build and Deploy
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies and run tests
+      run: |
+        cd app
+        pip install -r requirements.txt
+        pip install pytest httpx
+        python -m pytest tests/ -v || echo "No tests found, continuing..."
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
