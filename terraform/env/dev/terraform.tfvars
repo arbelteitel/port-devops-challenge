@@ -1,4 +1,4 @@
-aws_region = "us-west-2"
+aws_region = "eu-west-1"
 
 cluster_name    = "port-devops-dev"
 cluster_version = "1.28"
