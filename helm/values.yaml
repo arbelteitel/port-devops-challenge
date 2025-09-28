@@ -1,5 +1,4 @@
-# Default values for port-devops-app.
-# This is a YAML-formatted file.
+# Configuration values for arbel-app deployment
 
 replicaCount: 2
 
