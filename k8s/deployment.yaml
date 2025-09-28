@@ -4,6 +4,7 @@ metadata:
   name: fastapi-app
   labels:
     app: fastapi-app
+    test: oks
 spec:
   replicas: 2
   selector:
