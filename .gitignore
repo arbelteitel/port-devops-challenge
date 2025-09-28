@@ -3,8 +3,9 @@
 **/.terraform.lock.hcl
 *.tfstate
 *.tfstate.*
-*.tfvars
-!*.tfvars.example
+# Only exclude tfvars files that might contain secrets
+# terraform.tfvars files with config values should be committed
+# *-secrets.tfvars or similar should be excluded manually if needed
 .terraform.tfstate.lock.info
 
 # OS
