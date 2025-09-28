@@ -6,7 +6,7 @@ Clean, modular Terraform setup for the Port DevOps Challenge EKS cluster.
 
 ```
 terraform/
-├── modules/
+├── modules//
 │   └── eks-cluster/          # Reusable EKS cluster module
 └── environments/
     └── dev/                  # Development environment
