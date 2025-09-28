@@ -1,5 +1,14 @@
 terraform {
   required_version = ">= 1.0"
+  
+  backend "s3" {
+    bucket         = "port-devops-terraform-state-668383290491"
+    key            = "env/dev/terraform.tfstate"
+    region         = "eu-west-1"
+    dynamodb_table = "terraform-state-locks"
+    encrypt        = true
+  }
+  
   required_providers {
     aws = {
       source  = "hashicorp/aws"
