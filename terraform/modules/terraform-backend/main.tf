@@ -1,28 +1,11 @@
-terraform {
-  required_version = ">= 1.0"
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
-}
-
-provider "aws" {
-  region = var.aws_region
-}
-
 # S3 bucket for Terraform state
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = var.state_bucket_name
+  bucket = var.bucket_name
 
-  tags = {
-    Name        = "Terraform State Bucket"
-    Environment = "shared"
-    Purpose     = "terraform-state"
-  }
+  tags = var.tags
 }
 
+# Enable versioning for the S3 bucket
 resource "aws_s3_bucket_versioning" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
   versioning_configuration {
@@ -30,6 +13,7 @@ resource "aws_s3_bucket_versioning" "terraform_state" {
   }
 }
 
+# Enable server-side encryption for the S3 bucket
 resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
@@ -40,6 +24,7 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "terraform_state" 
   }
 }
 
+# Block public access to the S3 bucket
 resource "aws_s3_bucket_public_access_block" "terraform_state" {
   bucket = aws_s3_bucket.terraform_state.id
 
@@ -60,9 +45,5 @@ resource "aws_dynamodb_table" "terraform_locks" {
     type = "S"
   }
 
-  tags = {
-    Name        = "Terraform State Lock Table"
-    Environment = "shared"
-    Purpose     = "terraform-state-locking"
-  }
+  tags = var.tags
 }

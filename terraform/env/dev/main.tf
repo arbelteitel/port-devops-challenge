@@ -36,6 +36,15 @@ locals {
   }
 }
 
+# Create backend infrastructure (S3 + DynamoDB) for this environment
+module "terraform_backend" {
+  source = "../../modules/terraform-backend"
+
+  bucket_name         = var.state_bucket_name
+  dynamodb_table_name = var.dynamodb_table_name
+  tags                = local.common_tags
+}
+
 module "networking" {
   source = "../../modules/networking"
 

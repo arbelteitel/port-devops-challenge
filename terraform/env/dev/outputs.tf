@@ -33,3 +33,25 @@ output "node_group_arn" {
   description = "ARN of the EKS Node Group"
   value       = module.node_groups.node_group_arn
 }
+
+# Backend outputs
+output "s3_bucket_name" {
+  description = "Name of the S3 bucket for Terraform state"
+  value       = module.terraform_backend.s3_bucket_name
+}
+
+output "dynamodb_table_name" {
+  description = "Name of the DynamoDB table for state locking"
+  value       = module.terraform_backend.dynamodb_table_name
+}
+
+output "backend_config" {
+  description = "Backend configuration for migrating to remote state"
+  value = {
+    bucket         = module.terraform_backend.s3_bucket_name
+    key            = "env/dev/terraform.tfstate"
+    region         = var.aws_region
+    dynamodb_table = module.terraform_backend.dynamodb_table_name
+    encrypt        = true
+  }
+}
