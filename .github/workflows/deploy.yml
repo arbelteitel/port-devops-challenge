@@ -147,7 +147,7 @@ jobs:
           --set image.tag=$IMAGE_TAG \
           --set nameOverride=arbel-app \
           --set fullnameOverride=arbel-app \
-          --wait --timeout=60s
+          --wait --timeout=120s
 
     - name: Verify deployment
       run: |
