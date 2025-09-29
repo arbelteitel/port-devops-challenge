@@ -14,7 +14,7 @@ module "eks" {
     iam_role_attach_cni_policy = true
   }
 
-  # We'll manage node groups separately
+  # node groups managed elsewhere
   eks_managed_node_groups = {}
 
   manage_aws_auth_configmap = false

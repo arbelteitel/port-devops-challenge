@@ -1,11 +1,11 @@
-# Configuration values for arbel-app deployment
+# arbel-app config
 
 replicaCount: 2
 
 image:
-  repository: ""  # Will be set by CI/CD pipeline
+  repository: ""
   pullPolicy: IfNotPresent
-  tag: ""  # Will be set by CI/CD pipeline
+  tag: ""
 
 nameOverride: "arbel-app"
 fullnameOverride: "arbel-app"
@@ -41,13 +41,13 @@ env:
   - name: PORT
     value: "8000"
 
-# Pod anti-affinity to spread pods across different availability zones
+# spread across AZs
 affinity:
   podAntiAffinity:
     preferredDuringSchedulingIgnoredDuringExecution:
-    - weight: 100
-      podAffinityTerm:
-        labelSelector:
-          matchLabels:
-            app: arbel-app
-        topologyKey: topology.kubernetes.io/zone
+      - weight: 100
+        podAffinityTerm:
+          labelSelector:
+            matchLabels:
+              app: arbel-app
+          topologyKey: topology.kubernetes.io/zone

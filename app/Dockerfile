@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install dependencies and copy code in one layer
+# deps first for better caching
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
