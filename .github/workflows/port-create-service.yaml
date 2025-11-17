@@ -1,5 +1,5 @@
 name: Scaffold a new service
-
+cookiecutterTemplate: https://oauth2:$ORG_ADMIN_TOKEN@github.com/arbelteitel/port-devops-challenge.git
 on:
   workflow_dispatch:
     inputs:
